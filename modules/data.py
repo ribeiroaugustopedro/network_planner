@@ -16,7 +16,7 @@ def load_processed_data():
         st.error("MotherDuck Token not found.")
         return pd.DataFrame(), pd.DataFrame()
     
-    con = duckdb.connect(f'md:?motherduck_token={token}', read_only=True)
+    con = duckdb.connect(f'md:?motherduck_token={token}')
     df_users = con.execute("SELECT * FROM gold.users").df()
     df_providers = con.execute("SELECT * FROM gold.providers").df()
     
@@ -28,7 +28,6 @@ def load_processed_data():
 
 def load_all_data():
     df_providers, df_users = load_processed_data()
-    # Adding precise ignored columns based on user request
     ignored_portfolio = [
         'loc_latitude', 'loc_longitude', 'user_id', 'member_id', 
         'loc_neighborhood', 'loc_zip_code', 'neighborhood', 'zip_code'
@@ -54,7 +53,7 @@ def get_filtered_heatmap_grid(filter_sql="1=1"):
     if not token: token = os.getenv("MOTHERDUCK_TOKEN")
     if not token: return pd.DataFrame()
     try:
-        conn = duckdb.connect(f'md:?motherduck_token={token}', read_only=True)
+        conn = duckdb.connect(f'md:?motherduck_token={token}')
         query = f"""
             SELECT 
                 ROUND(loc_latitude, 2) as lat,
